@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Circle, Svg, Text as SVGText } from 'react-native-svg';
 
 const daysOfWeek = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
+
 
 const MyGoalScreen = () => {
 
