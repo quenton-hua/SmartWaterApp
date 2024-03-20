@@ -1,7 +1,7 @@
 import { Redirect } from "expo-router";
 
 const StartPage = () => {
-  return <Redirect href="/MyGoalScreen"/>
+  return <Redirect href="/LoginScreen"/>
 }
 
 export default StartPage
