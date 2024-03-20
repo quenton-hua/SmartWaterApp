@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Circle, Svg, Text as SVGText } from 'react-native-svg';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Circle, Svg, Text as SVGText, TSpan } from 'react-native-svg';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const daysOfWeek = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
 
@@ -30,65 +32,63 @@ const MyGoalScreen = () => {
 
   
   const ProgressCircleWithGoal = ({ percentage }) => {
-    const radius = 100;
-    const stroke = 10;
+    const screenWidth = Dimensions.get('window').width;
+    const size = screenWidth * 0.9;
+    const radius = size / 2;
+    const stroke = radius * 0.1; 
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
-  
     const progressInOz = (goalInOz * percentage) / 100;
     const progressDisplay = `${progressInOz.toFixed(1)} oz`;
 
-    // make it start from top position
-    const rotation = 270;
+    const rotation = 270; // make it start from top position
     const rotationTransform = `rotate(${rotation} ${radius} ${radius})`;
 
     return (
-      <Svg height="450" width="450" viewBox="0 0 200 200">
-        <Circle
-          stroke="#e6e6e6"
-          fill="transparent"
-          strokeWidth={stroke}
-          r={normalizedRadius}
-          cx="100"
-          cy="100"
-        />
-        <Circle
-          stroke="#00aaff"
-          fill="transparent"
-          strokeWidth={stroke}
-          strokeDasharray={circumference + ' ' + circumference}
-          style={{ strokeDashoffset }}
-          strokeLinecap="round"
-          r={normalizedRadius}
-          cx="100"
-          cy="100"
-          transform={rotationTransform}
-        />
-        <SVGText
-          x="100"
-          y="95" 
-          textAnchor="middle"
-          alignmentBaseline="middle"
-          fontSize="20"
-          fill="black"
-        >
-          {progressDisplay}
-        </SVGText>
-        <SVGText
-          x="76"
-          y="120" 
-          textAnchor="middle"
-          alignmentBaseline="middle"
-          fontSize="12"
-          fill="black"
-        >
-          Goal {goalInOz}oz
-        </SVGText>
-      </Svg>
+        <Svg height={size} width={size} viewBox={`0 0 ${size} ${size}`}>
+            <Circle
+                stroke="#e6e6e6"
+                fill="transparent"
+                strokeWidth={stroke}
+                r={normalizedRadius}
+                cx={radius}
+                cy={radius}
+            />
+            <Circle
+                stroke="#00aaff"
+                fill="transparent"
+                strokeWidth={stroke}
+                strokeDasharray={`${circumference} ${circumference}`}
+                style={{ strokeDashoffset }}
+                strokeLinecap="round"
+                r={normalizedRadius}
+                cx={radius}
+                cy={radius}
+                transform={rotationTransform}
+            />
+           <SVGText
+                x={radius}
+                y={radius}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize={`${radius * 0.2}px`}
+                fill="black"
+            >
+                {progressDisplay}
+                <TSpan
+                    x={radius * 0.85}
+                    dy={`${radius * 0.2}px`} 
+                    fontSize={`${radius * .1}px`}
+                >
+                    Goal {goalInOz} oz
+                </TSpan>
+            </SVGText>
+
+        </Svg>
     );
-  };
+};
 
 
   const handleDayPress = (day) => {
@@ -104,21 +104,21 @@ const MyGoalScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
       <View style={styles.dayContainer}>
-      {daysOfWeek.map((day, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.dayCircle,
-              selectedDay === day && styles.selectedDayCircle,
-            ]}
-            onPress={() => handleDayPress(day)}
-          >
-            <Text style={styles.dayText}>{day}</Text>
-          </TouchableOpacity>
-        ))}
+        {daysOfWeek.map((day, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.dayCircle,
+                selectedDay === day && styles.selectedDayCircle,
+              ]}
+              onPress={() => handleDayPress(day)}
+            >
+              <Text style={styles.dayText}>{day}</Text>
+            </TouchableOpacity>
+          ))}
       </View>
       <View style={styles.progressContainer}>
       <ProgressCircleWithGoal
@@ -131,17 +131,21 @@ const MyGoalScreen = () => {
         {renderHighlight('Goal', highlights.goalPercentage, '%')}
         {renderHighlight('Bottles To Go', highlights.bottlesToGo, '')}
       </View>
-    </View>
+
+      </ScrollView>
+    
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: 'white', 
+    flex: 1, // Use flex to fill the screen
+    padding: 10,
+    margin: 0,
+    flexGrow: 1,
+    flexShrink: 1,
+    backgroundColor: 'white',
   },
   highlightsContainer: {
     flexDirection: 'row',
@@ -149,7 +153,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginBottom: 20,
-    paddingVertical: 10,
   },
   highlight: {
     backgroundColor: '#f5f5f5',
@@ -159,6 +162,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
     marginHorizontal: 5,
+    minHeight: 60,
+    maxHeight: 120,
   },
   highlightLabel: {
     fontSize: 14,
@@ -175,10 +180,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     marginBottom: 20,
+
     backgroundColor: '#f5f5f5',
-    padding: 10,
+    padding: 15,
     width: '100%',
-    borderRadius: 20,
+    borderRadius: 25,
   },
   progressContainer: {
     backgroundColor: '#f5f5f5',
@@ -202,9 +208,7 @@ const styles = StyleSheet.create({
   },
   dayText: {
     color: 'black',
-  },
-  progressChart: {
-    height: 200,
+    fontSize: 14,
   },
   highlightTitle: {
     fontSize: 20,
@@ -213,32 +217,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 10,
   },
-  highlightsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: 20,
-  },
-  highlight: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1, 
-    marginHorizontal: 5, 
-  },
-  highlightLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
-  },
-  highlightValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-  },
 });
+
+
 
 
 export default MyGoalScreen;
