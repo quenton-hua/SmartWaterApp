@@ -27,10 +27,14 @@ const LoginScreen = () => {
 
     const API_HEADERS = {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Accept':'application/json'
       };
 
     fetch(loginEndpoint, {
       method: 'POST',
+      mode: 'no-cors',
+      
       headers: API_HEADERS,
       body: JSON.stringify(requestData),
     })
