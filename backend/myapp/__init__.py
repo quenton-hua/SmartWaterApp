@@ -5,9 +5,12 @@ from flask import Flask
 from .extensions import db
 from .routes import main
 from .config import Config
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
+
+    CORS(app)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = Config.DATABASE_URL
     # postgres://prettyprinted_render_example_user:11vq6k72GmFJazhVpz3pFUko50djVZT1@dpg-ceukdhmn6mpglqdb4avg-a.oregon-postgres.render.com/prettyprinted_render_example

@@ -51,7 +51,7 @@ const RegisterScreen = () => {
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.loginLink} onPress={handleLogin}>
-          <Text style={styles.registerText}>Don't have an account? Register</Text>
+          <Text style={styles.registerText}>Have an account? Login</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
