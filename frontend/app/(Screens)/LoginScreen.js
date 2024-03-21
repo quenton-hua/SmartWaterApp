@@ -13,11 +13,13 @@ import { BACKEND_URL } from "../constants.js";
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigation = useNavigation();
 
   const handleLogin = () => {
     console.log('Login with:', email, password);
+    setErrorMessage('');
 
     const loginEndpoint = BACKEND_URL + "/login"
     const requestData = {
@@ -33,20 +35,22 @@ const LoginScreen = () => {
 
     fetch(loginEndpoint, {
       method: 'POST',
-      mode: 'no-cors',
-      
       headers: API_HEADERS,
       body: JSON.stringify(requestData),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log('Login response:', data);
-        // Handle response data as needed
-        // For example, store user data in AsyncStorage or Redux state
+        if (data && data.message === "Login successful") {
+            console.log('Login successful');
+            navigation.navigate('MyGoalScreen');
+        } else {
+            console.log('Login failed');
+            setErrorMessage('Invalid username or password');
+        }
       })
       .catch((error) => {
         console.error('Error:', error);
-        // Handle error cases
+        setErrorMessage('Error during login. Please try again.');
       });
 
   };
@@ -75,6 +79,9 @@ const LoginScreen = () => {
             value={password}
             onChangeText={(text) => setPassword(text)}
           />
+          {errorMessage ? (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+        ) : null}
         </View>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Sign In</Text>
@@ -146,6 +153,10 @@ const styles = StyleSheet.create({
     color: '#0056b3',
     textDecorationLine: 'underline',
     marginTop: 15
+  },
+  errorMessage: {
+    color: 'red',
+    marginTop: 8,
   },
 });
 
