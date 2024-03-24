@@ -13,12 +13,55 @@ import { BACKEND_API_URL } from "../constants.js";
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigation = useNavigation();
 
   const handleRegister = () => {
-    // Handle Register logic here
     console.log('Register with:', email, password);
+    setErrorMessage('');
+
+    const registerEndpoint = "https://udrink-app.onrender.com/add_user"
+
+    const requestData = {
+      username: email,
+      password: password,
+    };
+
+    const API_HEADERS = {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Accept': 'application/json'
+    };
+
+    fetch(registerEndpoint, {
+      method: 'POST',
+      headers: API_HEADERS,
+      body: JSON.stringify(requestData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Data:', data); 
+        if (data && data.message === "User added successfully.") {
+          console.log('User added successfully.');
+          navigation.navigate('MyGoalScreen');
+        } else if (data.error && data.error === "Username and password are required.") {
+          console.log('User and password are required');
+          setErrorMessage('Username and password are required.');
+        } else if(data && data.error === "Username already exists.") {
+          console.log('Username already exists.');
+          setErrorMessage('Username already exists.');
+        } else {
+          console.log('Registration failed');
+          setErrorMessage('Error during registration. Please try again.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setErrorMessage('Error during registration. Please try again.');
+      });
+
+
 
   };
 
@@ -46,9 +89,12 @@ const RegisterScreen = () => {
             value={password}
             onChangeText={(text) => setPassword(text)}
           />
+          {errorMessage ? (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+        ) : null}
         </View>
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.loginLink} onPress={handleLogin}>
           <Text style={styles.registerText}>Have an account? Login</Text>
@@ -117,6 +163,10 @@ const styles = StyleSheet.create({
     color: '#0056b3',
     textDecorationLine: 'underline',
     marginTop: 15,
+  },
+  errorMessage: {
+    color: 'red',
+    marginTop: 8,
   },
 });
 

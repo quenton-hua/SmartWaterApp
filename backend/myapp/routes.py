@@ -17,7 +17,6 @@ def add_user():
     username = data.get('username')
     password = data.get('password')
 
-    print(username, password)
 
     if not username or not password:
         return jsonify({'error': 'Username and password are required.'}), 400
