@@ -42,8 +42,9 @@ const LoginScreen = ({ setCurrentUser }) => {
       .then((data) => {
         if (data && data.message === "Login successful") {
             console.log('Login successful');
+            // console.log(setCurrentUser);
             setCurrentUser(requestData.username);
-            navigation.navigate('MyGoalScreen');
+            // navigation.navigate('MyGoalScreen');
         } else {
             console.log('Login failed');
             setErrorMessage('Invalid username or password');

@@ -10,7 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { BACKEND_API_URL } from "../constants.js";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ setCurrentUser }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -44,6 +44,7 @@ const RegisterScreen = () => {
         console.log('Data:', data); 
         if (data && data.message === "User added successfully.") {
           console.log('User added successfully.');
+          setCurrentUser(requestData.username);
           // navigation.navigate('MyGoalScreen');
         } else if (data.error && data.error === "Username and password are required.") {
           console.log('User and password are required');

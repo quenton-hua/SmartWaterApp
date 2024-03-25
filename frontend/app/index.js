@@ -12,14 +12,13 @@ import SettingsScreen from './(Screens)/SettingsScreen';
 import WaterLevelScreen from './(Screens)/WaterLevelScreen';
 import LeaderboardScreen from './(Screens)/LeaderboardScreen';
 
-
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
-
+const MainTab = createBottomTabNavigator();
+const AuthTab = createBottomTabNavigator();
 
 const MainTabNavigator = () => (
-  <Tab.Navigator screenOptions={{ headerShown: false }}>
-    <Tab.Screen
+  <MainTab.Navigator screenOptions={{ headerShown: false }}>
+     <MainTab.Screen
       name="Home"
       component={MyGoalScreen}
       options={{
@@ -29,7 +28,7 @@ const MainTabNavigator = () => (
         )
       }}
     />
-    <Tab.Screen
+    <MainTab.Screen
       name="WaterLevel"
       component={WaterLevelScreen}
       options={{
@@ -39,7 +38,7 @@ const MainTabNavigator = () => (
         )
       }}
     />
-    <Tab.Screen
+    <MainTab.Screen
       name="Leaderboard"
       component={LeaderboardScreen}
       options={{
@@ -49,7 +48,7 @@ const MainTabNavigator = () => (
         )
       }}
     />
-    <Tab.Screen
+    <MainTab.Screen
       name="Settings"
       component={SettingsScreen}
       options={{
@@ -59,29 +58,54 @@ const MainTabNavigator = () => (
         )
       }}
     />
-  </Tab.Navigator>
+  </MainTab.Navigator>
 );
 
-// Stack navigator for the authentication flow
-const AuthStackNavigator = ({ setCurrentUser }) => (
-  <Stack.Navigator>
-    <Stack.Screen name="Login" options={{ headerShown: false }}>
-      {(props) => <LoginScreen {...props} setCurrentUser={setCurrentUser} />}
-    </Stack.Screen>
-    <Stack.Screen name="Register" component={RegisterScreen} />
-  </Stack.Navigator>
-);
+const AuthStackNavigator = ({ route }) => {
+  const { setCurrentUser } = route.params;
+
+  return (
+    <AuthTab.Navigator screenOptions={{ headerShown: false }} >
+
+      <AuthTab.Screen name="Login" options={{     // Login screen for authentication navigation
+        headerShown: false,
+        title: "Login",
+        tabBarIcon: ({color, size}) => (
+            <Ionicons name="settings-outline" size={size} color={color}/>
+        )
+        }}>
+        {(props) => <LoginScreen {...props} setCurrentUser={setCurrentUser} />}
+      </AuthTab.Screen>
+      
+      <AuthTab.Screen name="Register" options={{    // Register screen for authentication navigation
+        headerShown: false, 
+        title: "Register",
+        tabBarIcon: ({color, size}) => (
+            <Ionicons name="person-add-outline" size={size} color={color}/>
+        )
+        }}>
+        {(props) => <RegisterScreen {...props} setCurrentUser={setCurrentUser} />}
+      </AuthTab.Screen>
+    </AuthTab.Navigator>
+  );
+};
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   return (
-    <NavigationContainer independent={true}>
-      {currentUser ? (
-        <MainTabNavigator />
-      ) : (
-        <AuthStackNavigator setCurrentUser={setCurrentUser} />
-      )}
+    <NavigationContainer options={{ headerShown: false }} independent={true}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {currentUser ? (
+          <Stack.Screen name="Main" component={MainTabNavigator} />
+        ) : (
+          <Stack.Screen
+            name="Auth"
+            component={AuthStackNavigator}
+            initialParams={{ setCurrentUser }}
+          />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
