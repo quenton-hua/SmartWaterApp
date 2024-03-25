@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Image, Text, View } from 'react-native';
 
 // Import your screens
 import LoginScreen from './(Screens)/LoginScreen';
@@ -16,8 +17,28 @@ const Stack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
 const AuthTab = createBottomTabNavigator();
 
+
+function CustomHeader() {
+  return (
+    <View style={{ backgroundColor: 'white', paddingHorizontal: 20, paddingVertical: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {/* <Image
+          style={{ width: 55, height: 70, marginLeft: 10, marginTop: 5}}
+          source={{ uri: 'https://cdn.discordapp.com/attachments/1202329715000754267/1221963156050415656/image_4_2.png?ex=66147cdf&is=660207df&hm=4dd23544d530586fc79148b21b6e1982775a29f9bb4c78dc03809da6c1355983&' }}
+        /> */}
+        <Text style={{ fontSize: 20, marginLeft: 10, color: 'black' }}>uDrink</Text>
+      </View>
+    </View>
+  );
+}
+
+
+
 const MainTabNavigator = () => (
-  <MainTab.Navigator screenOptions={{ headerShown: false }}>
+  <MainTab.Navigator screenOptions={{
+    headerShown: true,
+    header: () => <CustomHeader />,
+  }}>
      <MainTab.Screen
       name="Home"
       component={MyGoalScreen}
@@ -65,20 +86,22 @@ const AuthStackNavigator = ({ route }) => {
   const { setCurrentUser } = route.params;
 
   return (
-    <AuthTab.Navigator screenOptions={{ headerShown: false }} >
+    <AuthTab.Navigator 
+      screenOptions={{
+        headerShown: true,
+        header: () => <CustomHeader />,
+    }}>
 
       <AuthTab.Screen name="Login" options={{     // Login screen for authentication navigation
-        headerShown: false,
         title: "Login",
         tabBarIcon: ({color, size}) => (
             <Ionicons name="settings-outline" size={size} color={color}/>
-        )
+        ),
         }}>
         {(props) => <LoginScreen {...props} setCurrentUser={setCurrentUser} />}
       </AuthTab.Screen>
       
       <AuthTab.Screen name="Register" options={{    // Register screen for authentication navigation
-        headerShown: false, 
         title: "Register",
         tabBarIcon: ({color, size}) => (
             <Ionicons name="person-add-outline" size={size} color={color}/>
@@ -103,6 +126,7 @@ const App = () => {
             name="Auth"
             component={AuthStackNavigator}
             initialParams={{ setCurrentUser }}
+
           />
         )}
       </Stack.Navigator>
