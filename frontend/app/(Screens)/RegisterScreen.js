@@ -44,7 +44,7 @@ const RegisterScreen = () => {
         console.log('Data:', data); 
         if (data && data.message === "User added successfully.") {
           console.log('User added successfully.');
-          navigation.navigate('MyGoalScreen');
+          // navigation.navigate('MyGoalScreen');
         } else if (data.error && data.error === "Username and password are required.") {
           console.log('User and password are required');
           setErrorMessage('Username and password are required.');

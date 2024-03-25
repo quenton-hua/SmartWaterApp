@@ -10,7 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { BACKEND_URL } from "../constants.js";
 
-const LoginScreen = () => {
+const LoginScreen = ({ setCurrentUser }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -42,6 +42,7 @@ const LoginScreen = () => {
       .then((data) => {
         if (data && data.message === "Login successful") {
             console.log('Login successful');
+            setCurrentUser(requestData.username);
             navigation.navigate('MyGoalScreen');
         } else {
             console.log('Login failed');
